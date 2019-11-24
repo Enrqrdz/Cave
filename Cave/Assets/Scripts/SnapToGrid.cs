@@ -1,23 +1,27 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-[ExecuteInEditMode]
 public class SnapToGrid : MonoBehaviour
 {
-	Grid grid;
+    private Grid _grid;
+    private Grid Grid
+    {
+        get
+        {
+            if (_grid == null)
+            {
+                _grid = GameObject.Find("Grid").GetComponent<Grid>();
+            }
+            return _grid;
+        }
+    }
 
-	void Start()
-	{
-		grid = GameObject.FindGameObjectWithTag("Grid").GetComponent<Grid>();
-		grid.SnapObjectToGrid(gameObject);
-	}
+    private void OnValidate()
+    {
+        Grid.SnapObjectToGrid(transform);
+    }
 
-	void Update()
-	{
-		if (transform.hasChanged)
-		{
-			grid.SnapObjectToGrid(gameObject);
-		}
-	}
+    private void Awake()
+    {
+        Grid.SnapObjectToGrid(transform);
+    }
 }

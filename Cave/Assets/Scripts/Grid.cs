@@ -1,32 +1,39 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
 public class Grid : MonoBehaviour
 {
-	[SerializeField]
-	private float size = 1f;
+    [SerializeField] private float _size = 1f;
+    [SerializeField] private float _height = .5f;
+    public Dictionary<int,Vector3> Positions = new Dictionary<int, Vector3>();
 
-	[SerializeField]
-	private float height = .5f;
+    public float GetSize() => _size;
+    public float GetHeight() => _height;
 
-	public void SnapObjectToGrid(GameObject target)
+    public void SnapObjectToGrid(Transform target_)
+    {
+        target_.position = GetNearestPointOnGrid(target_.position);
+        AddObjectToGridPositions(target_);
+    }
+
+    public Vector3 GetNearestPointOnGrid(Vector3 position_)
 	{
-		target.transform.position = GetNearestPointOnGrid(target.transform.position);
-	}
+		position_ -= transform.position;
 
-	public Vector3 GetNearestPointOnGrid(Vector3 position)
-	{
-		position -= transform.position;
+		int xCount = Mathf.RoundToInt(position_.x / _size);
+		int yCount = Mathf.RoundToInt(position_.y / _height);
+		int zCount = Mathf.RoundToInt(position_.z / _size);
 
-		int xCount = Mathf.RoundToInt(position.x / size);
-		int yCount = Mathf.RoundToInt(position.y / height);
-		int zCount = Mathf.RoundToInt(position.z / size);
-
-		Vector3 result = new Vector3(xCount * size, yCount * height, zCount * size);
+		Vector3 result = new Vector3(xCount * _size, yCount * _height, zCount * _size);
 		result += transform.position;
 		return result;
 	}
+
+    public void AddObjectToGridPositions(Transform object_)
+    {
+        var objectPosition = object_.position;
+        var hashCode = objectPosition.GetHashCode();
+        Positions[hashCode] = objectPosition;
+    }
 }
 
